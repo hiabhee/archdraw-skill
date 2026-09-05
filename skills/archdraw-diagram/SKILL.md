@@ -19,7 +19,32 @@ Do NOT use this skill for generic flowcharts, UI mockups, wireframes, or other n
 
 ## Prerequisite
 
-This skill requires the ArchDraw MCP server to be connected in the user's Claude client. Before proceeding, verify that the ArchDraw MCP tools are available. If they are not available, tell the user that the ArchDraw MCP server must be connected and do not attempt to generate the diagram through alternative means.
+This skill requires the ArchDraw MCP server to be connected in the user's Claude client. Before proceeding, verify that the ArchDraw MCP tools are available. If they are not available, do not attempt to generate the diagram through alternative means — instead tell the user to install the MCP server and provide these exact instructions:
+
+**Claude Code (terminal):**
+
+```bash
+claude mcp add archdraw -- npx -y archdraw-mcp-server
+# Verifies against hosted frontend at https://archdraw.hiabhee.online (default in archdraw-mcp-server@1.0.1).
+# If on 1.0.0, add env: claude mcp add archdraw --env API_BASE_URL=https://archdraw.hiabhee.online -- npx -y archdraw-mcp-server
+# Then restart Claude and verify with: claude mcp list
+```
+
+**Claude Desktop (`claude_desktop_config.json`):**
+
+```json
+{
+  "mcpServers": {
+    "archdraw": {
+      "command": "npx",
+      "args": ["-y", "archdraw-mcp-server"],
+      "env": { "API_BASE_URL": "https://archdraw.hiabhee.online" }
+    }
+  }
+}
+```
+
+Requirements: Node.js 18+ (`mcp-server/package.json:engines`). If `npx` is not found (nvm users), use full path e.g. `/Users/<user>/.nvm/versions/node/v22.22.1/bin/npx`. After adding, restart Claude and verify the tools (`generate_diagram`, `validate_diagram`, `fix_layout`, etc.) are listed. The skill itself is installed separately via `npx skills add hiabhee/archdraw-skill --skill archdraw-diagram -g -a claude-code` and does not include the MCP runtime.
 
 ## Workflow
 
