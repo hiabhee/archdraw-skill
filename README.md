@@ -7,7 +7,7 @@ Generates software architecture diagrams via ArchDraw's AI pipeline. This reposi
 - Node.js 18+ (required for the MCP server)
 - Claude Code or Claude Desktop
 
-This skill requires the ArchDraw MCP server to be connected in your Claude client. The MCP server is distributed via npm as `archdraw-mcp-server` and talks to the hosted ArchDraw frontend at `https://arch-draw.vercel.app`.
+This skill requires the ArchDraw MCP server to be connected in your Claude client. The MCP server is distributed via npm as `archdraw-mcp-server` and talks to the hosted ArchDraw frontend at `https://archdraw.hiabhee.online`.
 
 > **Note:** Installing the skill only adds the skill instructions to Claude. The ArchDraw MCP server must be connected separately — the skill will not function without it.
 
@@ -25,7 +25,7 @@ npx skills add hiabhee/archdraw-skill --skill archdraw-diagram -g -a claude-code
 
 ```bash
 claude mcp add archdraw -- npx -y archdraw-mcp-server
-# The server connects to https://arch-draw.vercel.app by default.
+# The server connects to https://archdraw.hiabhee.online by default.
 # To use a self-hosted frontend, set API_BASE_URL:
 # claude mcp add archdraw --env API_BASE_URL=https://your-frontend.com -- npx -y archdraw-mcp-server
 ```
@@ -39,7 +39,7 @@ claude mcp add archdraw -- npx -y archdraw-mcp-server
       "command": "npx",
       "args": ["-y", "archdraw-mcp-server"],
       "env": {
-        "API_BASE_URL": "https://arch-draw.vercel.app"
+        "API_BASE_URL": "https://archdraw.hiabhee.online"
       }
     }
   }
@@ -70,7 +70,7 @@ Claude will detect the intent (new from description vs. from repo vs. edit) and 
 ## Troubleshooting
 
 - **MCP not connected:** Ensure `npx -y archdraw-mcp-server` works locally (`echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}' | npx -y archdraw-mcp-server` should return server info).
-- **Diagram URL 404:** Check `API_BASE_URL` points to a running frontend (`https://arch-draw.vercel.app` is the hosted one).
+- **Diagram URL 404:** Check `API_BASE_URL` points to a running frontend (`https://archdraw.hiabhee.online` is the hosted one).
 - **Skill not triggering:** Try explicit phrasing: "using archdraw-diagram, diagram this repo..."
 
 ## License
