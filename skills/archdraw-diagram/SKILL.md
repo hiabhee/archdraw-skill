@@ -7,24 +7,32 @@ description: Create, refine, validate, and export software architecture diagrams
 
 Use ArchDraw when a user needs a clear, editable software architecture diagram or wants to turn codebase knowledge into a shared architecture view. ArchDraw is for system context, service boundaries, request and event flows, data stores, external dependencies, and proposed architecture changes.
 
-## Prerequisite
+## Prerequisite — for both user and agent
 
-First verify that the ArchDraw MCP tools are available. If they are not connected, ask the user to install the MCP server before proceeding; do not substitute a different diagram tool.
+**Check first:** verify ArchDraw MCP tools (`generate_diagram`, `validate_diagram`, etc.) are listed. If missing, do not invent a diagram — guide installation, then retry.
+
+**Fast path (recommended for both):** one command installs the skill and wires the MCP for every detected agent:
+```bash
+npx archdraw-agent setup --dry-run  # preview
+npx archdraw-agent setup             # Codex + Claude + OpenCode
+npx archdraw-agent setup --agent codex --dry-run
+```
+
+**Agent behavior:** if you have shell access, you MAY attempt setup yourself (`npx archdraw-agent setup` or the per-agent commands below). On success, tell the user a restart is required and re-check tools. On failure or no shell, **do not loop** — output the exact commands for the user, wait for confirmation, then re-check. Never substitute another diagram tool.
+
+**Per-agent commands (for user to run, or agent to run when `archdraw-agent` is unavailable):**
 
 **Codex**
-
 ```bash
 codex mcp add archdraw -- npx -y @hiabhee/archdraw-mcp-server
 ```
 
 **Claude Code**
-
 ```bash
 claude mcp add archdraw -- npx -y @hiabhee/archdraw-mcp-server
 ```
 
-**Claude Desktop** — add this to `claude_desktop_config.json`:
-
+**Claude Desktop** — add to `claude_desktop_config.json`:
 ```json
 {
   "mcpServers": {
@@ -36,8 +44,7 @@ claude mcp add archdraw -- npx -y @hiabhee/archdraw-mcp-server
 }
 ```
 
-**OpenCode** — add this to `opencode.json`:
-
+**OpenCode** — add to `opencode.json`:
 ```json
 {
   "$schema": "https://opencode.ai/config.json",
@@ -51,16 +58,12 @@ claude mcp add archdraw -- npx -y @hiabhee/archdraw-mcp-server
   }
 }
 ```
-
-Install this skill for OpenCode by placing the complete `archdraw-diagram` directory at `.opencode/skills/archdraw-diagram/` for one repository, or `~/.config/opencode/skills/archdraw-diagram/` for all repositories. Restart OpenCode, then verify the MCP connection:
-
+Copy the skill for OpenCode to `.opencode/skills/archdraw-diagram/` (project) or `~/.config/opencode/skills/archdraw-diagram/` (global). Then restart and verify:
 ```bash
 opencode mcp list
+# or: codex mcp list / claude mcp list
 ```
-
-OpenCode prefixes MCP tool names with the server name, so ArchDraw actions appear as `archdraw_generate_diagram`, `archdraw_validate_diagram`, and similar names.
-
-For another MCP-capable coding agent, register the same local stdio command using its MCP configuration format. The default server connects to `https://archdraw.hiabhee.online`. To use a self-hosted ArchDraw instance, set `API_BASE_URL` in the MCP server environment. Node.js 18+ is required. Restart the client after installation and verify that the ArchDraw tools are listed.
+OpenCode prefixes tools as `archdraw_generate_diagram`, etc. For other agents, use the same stdio command `npx -y @hiabhee/archdraw-mcp-server`. Default connects to `https://archdraw.hiabhee.online` — set `API_BASE_URL` for self-hosted. Requires Node.js 18+ and a client restart.
 
 ## Working with codebases
 
