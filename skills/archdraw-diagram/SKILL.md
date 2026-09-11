@@ -14,13 +14,13 @@ First verify that the ArchDraw MCP tools are available. If they are not connecte
 **Codex**
 
 ```bash
-codex mcp add archdraw -- npx -y archdraw-mcp-server
+codex mcp add archdraw -- npx -y @hiabhee/archdraw-mcp-server
 ```
 
 **Claude Code**
 
 ```bash
-claude mcp add archdraw -- npx -y archdraw-mcp-server
+claude mcp add archdraw -- npx -y @hiabhee/archdraw-mcp-server
 ```
 
 **Claude Desktop** — add this to `claude_desktop_config.json`:
@@ -30,7 +30,7 @@ claude mcp add archdraw -- npx -y archdraw-mcp-server
   "mcpServers": {
     "archdraw": {
       "command": "npx",
-      "args": ["-y", "archdraw-mcp-server"]
+      "args": ["-y", "@hiabhee/archdraw-mcp-server"]
     }
   }
 }
@@ -45,7 +45,7 @@ claude mcp add archdraw -- npx -y archdraw-mcp-server
     "servers": {
       "archdraw": {
         "type": "local",
-        "command": ["npx", "-y", "archdraw-mcp-server"]
+        "command": ["npx", "-y", "@hiabhee/archdraw-mcp-server"]
       }
     }
   }

@@ -19,7 +19,7 @@ The installer detects Codex, Claude Code, and OpenCode on your machine. To targe
 - Node.js 18+ (required for the MCP server)
 - An MCP-capable coding agent, such as Codex, Claude Code, Claude Desktop, or OpenCode
 
-This skill requires the ArchDraw MCP server to be connected in your coding agent. The MCP server is distributed via npm as `archdraw-mcp-server` and talks to the hosted ArchDraw frontend at `https://archdraw.hiabhee.online`.
+This skill requires the ArchDraw MCP server to be connected in your coding agent. The MCP server is distributed via npm as `@hiabhee/archdraw-mcp-server` and talks to the hosted ArchDraw frontend at `https://archdraw.hiabhee.online`.
 
 > **Note:** Installing the skill only adds agent instructions. The ArchDraw MCP server must be connected separately â€” the skill will not function without it.
 
@@ -46,16 +46,16 @@ Copy the complete `skills/archdraw-diagram` directory into `.opencode/skills/arc
 **Codex:**
 
 ```bash
-codex mcp add archdraw -- npx -y archdraw-mcp-server
+codex mcp add archdraw -- npx -y @hiabhee/archdraw-mcp-server
 ```
 
 **Claude Code:**
 
 ```bash
-claude mcp add archdraw -- npx -y archdraw-mcp-server
+claude mcp add archdraw -- npx -y @hiabhee/archdraw-mcp-server
 # The server connects to https://archdraw.hiabhee.online by default.
 # To use a self-hosted frontend, set API_BASE_URL:
-# claude mcp add archdraw --env API_BASE_URL=https://your-frontend.com -- npx -y archdraw-mcp-server
+# claude mcp add archdraw --env API_BASE_URL=https://your-frontend.com -- npx -y @hiabhee/archdraw-mcp-server
 ```
 
 **Claude Desktop:** Add to your `claude_desktop_config.json`:
@@ -65,7 +65,7 @@ claude mcp add archdraw -- npx -y archdraw-mcp-server
   "mcpServers": {
     "archdraw": {
       "command": "npx",
-      "args": ["-y", "archdraw-mcp-server"],
+      "args": ["-y", "@hiabhee/archdraw-mcp-server"],
       "env": {
         "API_BASE_URL": "https://archdraw.hiabhee.online"
       }
@@ -83,7 +83,7 @@ claude mcp add archdraw -- npx -y archdraw-mcp-server
     "servers": {
       "archdraw": {
         "type": "local",
-        "command": ["npx", "-y", "archdraw-mcp-server"]
+        "command": ["npx", "-y", "@hiabhee/archdraw-mcp-server"]
       }
     }
   }
@@ -119,7 +119,7 @@ For the complete guide to using ArchDraw with Codex, Claude Code, and OpenCodeâ€
 
 ## Troubleshooting
 
-- **MCP not connected:** Ensure `npx -y archdraw-mcp-server` works locally (`echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}' | npx -y archdraw-mcp-server` should return server info).
+- **MCP not connected:** Ensure `npx -y @hiabhee/archdraw-mcp-server` works locally (`echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}' | npx -y @hiabhee/archdraw-mcp-server` should return server info).
 - **Diagram URL 404:** Check `API_BASE_URL` points to a running frontend (`https://archdraw.hiabhee.online` is the hosted one).
 - **Skill not triggering:** Try explicit phrasing: "using archdraw-diagram, diagram this repo..."
 

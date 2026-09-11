@@ -62,9 +62,9 @@ function addCodexMcp(options) {
     console.log('codex: would connect the ArchDraw MCP server.');
     return;
   }
-  const result = run('codex', ['mcp', 'add', 'archdraw', '--', 'npx', '-y', 'archdraw-mcp-server'], options);
+  const result = run('codex', ['mcp', 'add', 'archdraw', '--', 'npx', '-y', '@hiabhee/archdraw-mcp-server'], options);
   if (result.status === 0) console.log('codex: ArchDraw MCP connected.');
-  else console.log(`codex: MCP connection needs attention. Run: codex mcp add archdraw -- npx -y archdraw-mcp-server\n${result.stderr || result.stdout}`);
+  else console.log(`codex: MCP connection needs attention. Run: codex mcp add archdraw -- npx -y @hiabhee/archdraw-mcp-server\n${result.stderr || result.stdout}`);
 }
 
 function addClaudeMcp(options) {
@@ -72,9 +72,9 @@ function addClaudeMcp(options) {
     console.log('claude: would connect the ArchDraw MCP server.');
     return;
   }
-  const result = run('claude', ['mcp', 'add', 'archdraw', '--', 'npx', '-y', 'archdraw-mcp-server'], options);
+  const result = run('claude', ['mcp', 'add', 'archdraw', '--', 'npx', '-y', '@hiabhee/archdraw-mcp-server'], options);
   if (result.status === 0) console.log('claude: ArchDraw MCP connected.');
-  else console.log(`claude: MCP connection needs attention. Run: claude mcp add archdraw -- npx -y archdraw-mcp-server\n${result.stderr || result.stdout}`);
+  else console.log(`claude: MCP connection needs attention. Run: claude mcp add archdraw -- npx -y @hiabhee/archdraw-mcp-server\n${result.stderr || result.stdout}`);
 }
 
 function addOpenCodeMcp(options) {
@@ -98,7 +98,7 @@ function addOpenCodeMcp(options) {
     console.log('opencode: ArchDraw MCP is already configured.');
     return;
   }
-  config.mcp.servers.archdraw = { type: 'local', command: ['npx', '-y', 'archdraw-mcp-server'] };
+  config.mcp.servers.archdraw = { type: 'local', command: ['npx', '-y', '@hiabhee/archdraw-mcp-server'] };
   mkdirSync(dirname(configPath), { recursive: true });
   writeFileSync(configPath, `${JSON.stringify(config, null, 2)}\n`);
   console.log('opencode: ArchDraw MCP connected.');
