@@ -1,107 +1,106 @@
 ---
 name: archdraw-diagram
-description: Generate, validate, and refine software architecture diagrams using ArchDraw's AI pipeline. Trigger when the user asks to create an architecture diagram, visualize a system's structure, turn a GitHub repo into a diagram, or refine/critique an existing architecture diagram. Requires the ArchDraw MCP server to be connected.
+description: Create, refine, validate, and export software architecture diagrams in ArchDraw. Use for architecture views, system maps, repository-informed diagrams, and architecture change documentation; do not use for generic flowcharts or UI mockups.
 ---
-
-<!-- TODO: confirm exact MCP tool names from arc-draw/mcp -->
 
 # ArchDraw Diagram
 
-## When to use this skill
-
-Use this skill when the user asks to:
-
-- Generate a software/system architecture diagram from a text description
-- Visualize a GitHub repository as an architecture diagram
-- Refine, critique, or edit an existing architecture diagram
-
-Do NOT use this skill for generic flowcharts, UI mockups, wireframes, or other non-architectural diagrams. This skill is scoped exclusively to software and system architecture.
+Use ArchDraw when a user needs a clear, editable software architecture diagram or wants to turn codebase knowledge into a shared architecture view. ArchDraw is for system context, service boundaries, request and event flows, data stores, external dependencies, and proposed architecture changes.
 
 ## Prerequisite
 
-This skill requires the ArchDraw MCP server to be connected in the user's Claude client. Before proceeding, verify that the ArchDraw MCP tools are available. If they are not available, do not attempt to generate the diagram through alternative means — instead tell the user to install the MCP server and provide these exact instructions:
+First verify that the ArchDraw MCP tools are available. If they are not connected, ask the user to install the MCP server before proceeding; do not substitute a different diagram tool.
 
-**Claude Code (terminal):**
+**Codex**
+
+```bash
+codex mcp add archdraw -- npx -y archdraw-mcp-server
+```
+
+**Claude Code**
 
 ```bash
 claude mcp add archdraw -- npx -y archdraw-mcp-server
-# Verifies against hosted frontend at https://archdraw.hiabhee.online (default in archdraw-mcp-server@1.0.1).
-# If on 1.0.0, add env: claude mcp add archdraw --env API_BASE_URL=https://archdraw.hiabhee.online -- npx -y archdraw-mcp-server
-# Then restart Claude and verify with: claude mcp list
 ```
 
-**Claude Desktop (`claude_desktop_config.json`):**
+**Claude Desktop** — add this to `claude_desktop_config.json`:
 
 ```json
 {
   "mcpServers": {
     "archdraw": {
       "command": "npx",
-      "args": ["-y", "archdraw-mcp-server"],
-      "env": { "API_BASE_URL": "https://archdraw.hiabhee.online" }
+      "args": ["-y", "archdraw-mcp-server"]
     }
   }
 }
 ```
 
-Requirements: Node.js 18+ (`mcp-server/package.json:engines`). If `npx` is not found (nvm users), use full path e.g. `/Users/<user>/.nvm/versions/node/v22.22.1/bin/npx`. After adding, restart Claude and verify the tools (`generate_diagram`, `validate_diagram`, `fix_layout`, etc.) are listed. The skill itself is installed separately via `npx skills add hiabhee/archdraw-skill --skill archdraw-diagram -g -a claude-code` and does not include the MCP runtime.
+**OpenCode** — add this to `opencode.json`:
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "servers": {
+      "archdraw": {
+        "type": "local",
+        "command": ["npx", "-y", "archdraw-mcp-server"]
+      }
+    }
+  }
+}
+```
+
+Install this skill for OpenCode by placing the complete `archdraw-diagram` directory at `.opencode/skills/archdraw-diagram/` for one repository, or `~/.config/opencode/skills/archdraw-diagram/` for all repositories. Restart OpenCode, then verify the MCP connection:
+
+```bash
+opencode mcp list
+```
+
+OpenCode prefixes MCP tool names with the server name, so ArchDraw actions appear as `archdraw_generate_diagram`, `archdraw_validate_diagram`, and similar names.
+
+For another MCP-capable coding agent, register the same local stdio command using its MCP configuration format. The default server connects to `https://archdraw.hiabhee.online`. To use a self-hosted ArchDraw instance, set `API_BASE_URL` in the MCP server environment. Node.js 18+ is required. Restart the client after installation and verify that the ArchDraw tools are listed.
+
+## Working with codebases
+
+When the user asks for a diagram of a repository, use the codebase context already available to you when permitted. Identify entry points, services, routes, jobs, data stores, external services, and important request or event paths. Do not claim that a relationship is verified unless supporting code, configuration, or documentation provides evidence.
+
+If the user supplies a GitHub URL and asks for ArchDraw's hosted Repo2Diagram analysis, use that workflow only when the connected ArchDraw MCP exposes a repository-analysis tool. Otherwise, explain that you can create a repository-informed diagram from the code context available to you, then generate it through ArchDraw.
 
 ## Workflow
 
-When the skill is triggered, follow these pipeline stages in order by calling the ArchDraw MCP tools:
+1. Clarify the intended view: current state or proposed state; audience; and scope (whole system, service boundary, request flow, or change).
+2. For repository-informed work, inspect accessible code and documentation before modelling. Prefer evidence over inference and call out uncertainty.
+3. Produce Mermaid that expresses the architecture clearly. Use `graph LR` for most service maps and `graph TD` when a top-down flow is clearer. Use subgraphs for meaningful boundaries such as client, edge, services, data, and external systems.
+4. Call `generate_diagram` with the Mermaid, the user's original request in `userPrompt`, and any explicit technologies in `techStack`. Mermaid is the preferred MCP input mode.
+5. If generation reports validation or topology errors, correct the Mermaid and retry with the reported issue addressed. Stop and explain the failure if it cannot be resolved safely.
+6. Use `validate_diagram` for a final check when the diagram will be shared or used for a decision. Use `fix_layout` only when the generated layout needs adjustment.
+7. Share the returned ArchDraw URL and summarize what the view shows, what evidence supports it, and any assumptions or gaps.
 
-1. **Intent detection** — Clarify the user's intent. Determine whether they want a new diagram from a description, a diagram generated from a GitHub repository, or edits to an existing diagram. Ask for clarification if the intent is ambiguous.
+## Diagram quality
 
-2. **AST-based extraction (repo path only)** — If the request is to diagram a GitHub repo, run AST-based extraction on the repository first to derive the system structure before proceeding to generation.
+- Model a coherent story, not an inventory of boxes. Make the main flow legible first.
+- Label edges with the important interaction when it clarifies the relationship; distinguish synchronous calls from asynchronous events where known.
+- Group only genuine boundaries. Avoid decorative layers or groups that conceal the flow.
+- Keep the scope appropriate to the audience. Create separate views instead of one unreadable all-in-one diagram.
+- Preserve explicit technologies and names from the user or repository. Never invent infrastructure, services, or integrations.
+- Use ArchDraw's semantic shapes when helpful: gateways/load balancers, people/clients, external systems, security components, and data stores should be visually distinct.
 
-3. **Mermaid generation** — Generate the Mermaid diagram source from the resolved intent and/or extracted repository structure.
+## Architecture changes
 
-4. **AST validation with self-repair** — Validate the generated Mermaid via AST parsing. On failure, self-repair and retry. Retry up to 16 times before giving up. If all retries are exhausted, report the failure to the user (see Failure handling).
+For a proposed refactor, migration, or feature, create a clearly labelled proposed-state view. Explain changed components, new dependencies, affected data or event paths, and assumptions that require human review. Do not present a proposal as the repository's current architecture.
 
-5. **ELK layout** — Apply ELK layout to compute node positions.
+## Useful MCP tools
 
-6. **React Flow conversion** — Convert the laid-out diagram to React Flow format.
-
-7. **Quality scoring** — Score the diagram for quality. The diagram must exceed the quality threshold to be considered done.
-
-8. **storyGuard check** — Run the storyGuard check to verify the diagram meets narrative/coherence requirements.
-
-9. **Semantic layer grouping** — Group nodes into the 4-tier node architecture (semantic layers).
-
-Execute each stage sequentially. Do not skip stages or reorder them.
-
-## Failure handling
-
-- If AST validation retries are exhausted (16 retries), stop and report to the user that validation failed at the AST validation stage. Include the last error if available. Do not return a broken or unvalidated diagram.
-- If storyGuard rejects the diagram, stop and report to the user that the diagram was rejected at the storyGuard stage, with the reason if available. Do not silently return the rejected diagram.
-- For any other stage failure, report the specific stage that failed and the error to the user rather than silently returning a broken diagram.
+- `generate_diagram` — create a diagram from Mermaid (preferred) or legacy structured JSON.
+- `validate_diagram` — validate the current diagram.
+- `fix_layout` — re-layout an existing diagram.
+- `update_diagram` — make targeted changes to the active diagram.
+- `get_diagram_state`, `save_checkpoint`, `load_checkpoint` — inspect or preserve the current working diagram.
+- `export_diagram` — export a finished diagram.
+- `list_node_types`, `list_templates`, `apply_template`, `read_me` — discover ArchDraw's available building blocks and guidance.
 
 ## Output contract
 
-A diagram is considered done only when all of the following hold:
-
-- It passes AST validation
-- Its quality score is above threshold
-- Semantic layers are grouped into the 4-tier node architecture
-
-If asked to describe or style the output, use the ArchDraw design system: monochrome palette with DodgerBlue (#1E90FF / #2B7FD9) as the sole accent color.
-
-## Examples
-
-**Example 1 — Repo to diagram**
-
-> User: "Diagram this GitHub repo: https://github.com/org/repo"
-
-→ Run the repo-to-diagram path: AST-based extraction from the repo, then Mermaid generation, then validation, layout, conversion, quality scoring, storyGuard, and semantic layer grouping.
-
-**Example 2 — Description to diagram**
-
-> User: "Show me a microservices architecture for an e-commerce app"
-
-→ Run the description path: treat the description as the intent, generate Mermaid, then follow the full validation and layout pipeline (steps 4–9).
-
-**Example 3 — Refine existing diagram**
-
-> User: "Refine this diagram to add a caching layer between the API gateway and the database"
-
-→ Treat as an edit to an existing diagram: resolve intent as an edit, regenerate/update Mermaid accordingly, then re-run validation, layout, conversion, quality scoring, storyGuard, and semantic layer grouping.
+Treat the work as complete only after the diagram is generated successfully and the response includes the ArchDraw URL. For repository-informed diagrams, state the evidence basis and any material assumptions. For changes, distinguish current state from proposed state.

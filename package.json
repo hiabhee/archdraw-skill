@@ -1,0 +1,30 @@
+{
+  "name": "archdraw-agent",
+  "version": "0.1.0",
+  "description": "Install the ArchDraw skill and MCP server for coding agents.",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "archdraw-agent": "bin/archdraw-agent.mjs"
+  },
+  "files": [
+    "bin",
+    "skills",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hiabhee/archdraw-skill.git"
+  },
+  "bugs": {
+    "url": "https://github.com/hiabhee/archdraw-skill/issues"
+  },
+  "homepage": "https://archdraw.hiabhee.online"
+}
