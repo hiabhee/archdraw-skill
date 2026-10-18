@@ -14,8 +14,8 @@ Use ArchDraw when a user needs a clear, editable software architecture diagram o
 **If you have shell access**, you may run the installer once. It installs this skill and connects ArchDraw for Codex, Claude Code, and OpenCode:
 
 ```bash
-npx -y archdraw-agent@0.1.4 setup --dry-run   # preview
-npx -y archdraw-agent@0.1.4 setup
+npx -y archdraw-agent@0.1.5 setup --dry-run   # preview
+npx -y archdraw-agent@0.1.5 setup
 ```
 
 If it succeeds, tell the user to restart the agent, then check the tools again. If it fails, or you have no shell, **do not retry in a loop**. Give the user the matching setup below, wait for confirmation, then check again.
@@ -28,12 +28,12 @@ If it succeeds, tell the user to restart the agent, then check the tools again. 
   ```
 - **Codex:** install the plugin (`codex plugin marketplace add hiabhee/ArchDraw`, then `codex plugin add archdraw@archdraw`), or run:
   ```bash
-  codex mcp add archdraw --env API_BASE_URL=https://archdraw.hiabhee.online -- npx -y @hiabhee/archdraw-mcp-server@1.0.5
+  codex mcp add archdraw --env API_BASE_URL=https://archdraw.hiabhee.online -- npx -y @hiabhee/archdraw-mcp-server@1.0.6
   ```
 - **Claude apps (claude.ai, Desktop, mobile):** Settings → Connectors → Add custom connector, with URL `https://archdraw.hiabhee.online/api/mcp`.
 - **OpenCode v1** (`opencode.json`): `"mcp": { "archdraw": { "type": "remote", "url": "https://archdraw.hiabhee.online/api/mcp", "enabled": true } }`
 - **OpenCode v2** (`opencode.jsonc`): `"mcp": { "servers": { "archdraw": { "type": "remote", "url": "https://archdraw.hiabhee.online/api/mcp" } } }`
-- **Other clients:** use the remote URL above with the Streamable HTTP transport. If the client supports only local servers, use command `npx`, arguments `-y @hiabhee/archdraw-mcp-server@1.0.5`, and environment `API_BASE_URL=https://archdraw.hiabhee.online`.
+- **Other clients:** use the remote URL above with the Streamable HTTP transport. If the client supports only local servers, use command `npx`, arguments `-y @hiabhee/archdraw-mcp-server@1.0.6`, and environment `API_BASE_URL=https://archdraw.hiabhee.online`.
 
 The local server **requires** `API_BASE_URL`. Without it, the tools load but `generate_diagram`, `fix_layout`, and preview links fail with "requires API_BASE_URL". For a self-hosted ArchDraw, use that deployment's URL instead. The local server needs Node.js 18 or later. Every client needs a restart after setup.
 
