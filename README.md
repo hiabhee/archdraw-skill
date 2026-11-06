@@ -14,7 +14,7 @@ The skill has two parts, and the agent needs both:
 ## Quick setup
 
 ```bash
-npx -y archdraw-agent@0.1.5 setup
+npx -y archdraw-agent@0.1.6 setup
 ```
 
 The installer finds Codex, Claude Code, and OpenCode on your machine. For each one, it installs the skill and connects ArchDraw:
@@ -22,7 +22,7 @@ The installer finds Codex, Claude Code, and OpenCode on your machine. For each o
 | Agent | Skill location | MCP connection |
 | --- | --- | --- |
 | Claude Code | `~/.claude/skills/archdraw-diagram/` | Hosted endpoint, user scope |
-| Codex | `~/.codex/skills/archdraw-diagram/` | Local server `@hiabhee/archdraw-mcp-server@1.0.6` with `API_BASE_URL` |
+| Codex | `~/.codex/skills/archdraw-diagram/` | Local server `@hiabhee/archdraw-mcp-server@1.1.0` with `API_BASE_URL` |
 | OpenCode | `~/.config/opencode/skills/archdraw-diagram/` | Hosted endpoint in `~/.config/opencode/opencode.json` (v1 or v2 format, from `opencode --version`). The old file is kept as `opencode.json.bak`. |
 
 Options:
@@ -38,7 +38,7 @@ Restart the agent after setup.
 Versions 0.1.3 and earlier registered the local server without `API_BASE_URL`. With that install, the tools load, but diagram generation fails with "requires API_BASE_URL". Versions 0.1.3 and earlier also wrote the OpenCode v2 format into all OpenCode configs. To repair an install, run:
 
 ```bash
-npx -y archdraw-agent@0.1.5 setup --force
+npx -y archdraw-agent@0.1.6 setup --force
 ```
 
 ## Manual setup
@@ -72,7 +72,7 @@ claude mcp add --scope user --transport http archdraw https://archdraw.hiabhee.o
 **Codex**
 
 ```bash
-codex mcp add archdraw --env API_BASE_URL=https://archdraw.hiabhee.online -- npx -y @hiabhee/archdraw-mcp-server@1.0.6
+codex mcp add archdraw --env API_BASE_URL=https://archdraw.hiabhee.online -- npx -y @hiabhee/archdraw-mcp-server@1.1.0
 ```
 
 **Claude apps (claude.ai, Claude Desktop, Claude mobile)**
@@ -118,7 +118,7 @@ Use the remote URL `https://archdraw.hiabhee.online/api/mcp` with the Streamable
   "mcpServers": {
     "archdraw": {
       "command": "npx",
-      "args": ["-y", "@hiabhee/archdraw-mcp-server@1.0.6"],
+      "args": ["-y", "@hiabhee/archdraw-mcp-server@1.1.0"],
       "env": {
         "API_BASE_URL": "https://archdraw.hiabhee.online"
       }
@@ -127,7 +127,7 @@ Use the remote URL `https://archdraw.hiabhee.online/api/mcp` with the Streamable
 }
 ```
 
-> **CAUTION:** The local server requires `API_BASE_URL`. It has no default. If you do not set it, the tools load, but `generate_diagram`, `fix_layout`, and preview links fail. For a self-hosted ArchDraw, set it to your deployment URL. The local server needs Node.js 18 or later.
+> **CAUTION:** The local server requires `API_BASE_URL`. It has no default. If you do not set it, the tools load, but `generate_diagram`, `apply_template`, and preview links fail. For a self-hosted ArchDraw, set it to your deployment URL. The local server needs Node.js 18 or later.
 
 For steps and verification in Cursor, VS Code, Gemini CLI, and other clients, read [Connect a coding agent](https://archdraw.hiabhee.online/docs/connect-agents).
 
@@ -139,7 +139,7 @@ codex mcp list      # Codex
 opencode mcp list   # OpenCode
 ```
 
-Make sure that `archdraw` is connected. Then ask your agent to list the ArchDraw tools. You should see `generate_diagram`, `validate_diagram`, and the other ArchDraw tools.
+Make sure that `archdraw` is connected. Then ask your agent to list the ArchDraw tools. You should see `generate_diagram`, `update_diagram`, `get_diagram_state`, `apply_template`, `draw_on_canvas`, and `layout_diagram`.
 
 ## Usage
 
@@ -164,7 +164,7 @@ Refer to the [privacy policy](https://archdraw.hiabhee.online/privacy).
 
 | Problem | Corrective action |
 | --- | --- |
-| `generate_diagram` fails with "requires API_BASE_URL". | Add `API_BASE_URL=https://archdraw.hiabhee.online` to the local server, or run `npx -y archdraw-agent@0.1.5 setup --force`. |
+| `generate_diagram` fails with "requires API_BASE_URL". | Add `API_BASE_URL=https://archdraw.hiabhee.online` to the local server, or run `npx -y archdraw-agent@0.1.6 setup --force`. |
 | Follow-up calls fail with "needs the workingSessionId". | The agent must resend the `workingSessionId` from `generate_diagram`. Update the skill to 0.1.4 or later. |
 | The tools do not appear. | Fully restart the agent. Then run the list command for your agent. |
 | OpenCode does not load ArchDraw. | Make sure the entry uses the format for your OpenCode version (v1 or v2 above). |

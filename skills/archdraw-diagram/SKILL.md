@@ -9,13 +9,13 @@ Use ArchDraw when a user needs a clear, editable software architecture diagram o
 
 ## Prerequisite: the ArchDraw MCP tools
 
-**Check first.** Confirm that the ArchDraw MCP tools (`generate_diagram`, `validate_diagram`, and the others below) are available. Some clients add a server prefix to tool names, such as `archdraw_generate_diagram`. If the tools are missing, do not invent a diagram and do not substitute another diagram tool. Help the user connect ArchDraw, then check again.
+**Check first.** Confirm that the ArchDraw MCP tools (`generate_diagram`, `update_diagram`, `get_diagram_state`, `apply_template`, and in version 1.1.0 and later `draw_on_canvas` and `layout_diagram`) are available. Some clients add a server prefix to tool names, such as `archdraw_generate_diagram`. If the tools are missing, do not invent a diagram and do not substitute another diagram tool. Help the user connect ArchDraw, then check again.
 
 **If you have shell access**, you may run the installer once. It installs this skill and connects ArchDraw for Codex, Claude Code, and OpenCode:
 
 ```bash
-npx -y archdraw-agent@0.1.5 setup --dry-run   # preview
-npx -y archdraw-agent@0.1.5 setup
+npx -y archdraw-agent@0.1.6 setup --dry-run   # preview
+npx -y archdraw-agent@0.1.6 setup
 ```
 
 If it succeeds, tell the user to restart the agent, then check the tools again. If it fails, or you have no shell, **do not retry in a loop**. Give the user the matching setup below, wait for confirmation, then check again.
@@ -28,14 +28,14 @@ If it succeeds, tell the user to restart the agent, then check the tools again. 
   ```
 - **Codex:** install the plugin (`codex plugin marketplace add hiabhee/ArchDraw`, then `codex plugin add archdraw@archdraw`), or run:
   ```bash
-  codex mcp add archdraw --env API_BASE_URL=https://archdraw.hiabhee.online -- npx -y @hiabhee/archdraw-mcp-server@1.0.6
+  codex mcp add archdraw --env API_BASE_URL=https://archdraw.hiabhee.online -- npx -y @hiabhee/archdraw-mcp-server@1.1.0
   ```
 - **Claude apps (claude.ai, Desktop, mobile):** Settings → Connectors → Add custom connector, with URL `https://archdraw.hiabhee.online/api/mcp`.
 - **OpenCode v1** (`opencode.json`): `"mcp": { "archdraw": { "type": "remote", "url": "https://archdraw.hiabhee.online/api/mcp", "enabled": true } }`
 - **OpenCode v2** (`opencode.jsonc`): `"mcp": { "servers": { "archdraw": { "type": "remote", "url": "https://archdraw.hiabhee.online/api/mcp" } } }`
-- **Other clients:** use the remote URL above with the Streamable HTTP transport. If the client supports only local servers, use command `npx`, arguments `-y @hiabhee/archdraw-mcp-server@1.0.6`, and environment `API_BASE_URL=https://archdraw.hiabhee.online`.
+- **Other clients:** use the remote URL above with the Streamable HTTP transport. If the client supports only local servers, use command `npx`, arguments `-y @hiabhee/archdraw-mcp-server@1.1.0`, and environment `API_BASE_URL=https://archdraw.hiabhee.online`.
 
-The local server **requires** `API_BASE_URL`. Without it, the tools load but `generate_diagram`, `fix_layout`, and preview links fail with "requires API_BASE_URL". For a self-hosted ArchDraw, use that deployment's URL instead. The local server needs Node.js 18 or later. Every client needs a restart after setup.
+The local server **requires** `API_BASE_URL`. Without it, the tools load but `generate_diagram`, `apply_template`, and preview links fail with "requires API_BASE_URL". For a self-hosted ArchDraw, use that deployment's URL instead. The local server needs Node.js 18 or later. Every client needs a restart after setup.
 
 Full setup and verification for each client: https://archdraw.hiabhee.online/docs/connect-agents
 
@@ -52,12 +52,12 @@ ArchDraw's MCP tools do not read repositories themselves. If the user gives a Gi
 3. Produce Mermaid that expresses the architecture clearly. Use `graph LR` for most service maps and `graph TD` when a top-down flow is clearer. Use subgraphs for meaningful boundaries such as client, edge, services, data, and external systems.
 4. Call `generate_diagram` with the Mermaid, the user's original request in `userPrompt`, and any explicit technologies in `techStack`. Mermaid is the preferred MCP input mode.
 5. If generation reports validation or topology errors, correct the Mermaid and retry with the reported issue addressed. Stop and explain the failure if it cannot be resolved safely.
-6. Use `validate_diagram` for a final check when the diagram will be shared or used for a decision. Use `fix_layout` only when the generated layout needs adjustment.
+6. To change the layout direction or restructure the diagram, call `generate_diagram` again with revised Mermaid; it is laid out with the editor's Mermaid → Dagre pipeline.
 7. Share both returned links (see "Preview links") and summarize what the view shows, what evidence supports it, and any assumptions or gaps.
 
 ## Working sessions
 
-`generate_diagram` and `apply_template` return a `workingSessionId`. Keep it and pass it on every later call about that diagram: `update_diagram`, `get_diagram_state`, `validate_diagram`, `save_checkpoint`, `load_checkpoint`, and `export_diagram`. The hosted server requires it; without it, those calls return an error. `fix_layout` does not use a session: pass it the nodes and edges to lay out. Start a new diagram with a new `generate_diagram` call instead of reusing another diagram's session.
+`generate_diagram` and `apply_template` return a `workingSessionId`. Keep it and pass it on every later call about that diagram: `update_diagram` and `get_diagram_state`. The hosted server requires it; without it, those calls return an error. Start a new diagram with a new `generate_diagram` call instead of reusing another diagram's session.
 
 ## Preview links (always share them)
 
@@ -81,15 +81,14 @@ For a proposed refactor, migration, or feature, create a clearly labelled propos
 
 ## Useful MCP tools
 
-- `read_me` — ArchDraw's reference guide (tiers, node types, edge types, layout rules). Call it before your first diagram in a session.
-- `generate_diagram` — create a diagram from Mermaid (preferred) or structured nodes and edges.
-- `update_diagram` — make targeted changes to the active diagram.
+- `generate_diagram` — create a diagram from Mermaid (preferred) or structured nodes and edges. Its result includes structural checks.
+- `update_diagram` — make targeted changes to the active diagram; a published link updates in place.
 - `get_diagram_state` — read the current nodes and edges before editing.
-- `validate_diagram` — check the current diagram for structural issues.
-- `fix_layout` — lay out the diagram again with ArchDraw's Mermaid → Dagre pipeline.
-- `save_checkpoint`, `load_checkpoint` — save and restore a named version before a risky change.
-- `export_diagram` — export as JSON, PNG, or SVG.
-- `list_node_types`, `list_templates`, `apply_template` — discover components and start from a template.
+- `apply_template` — start from a ready-made architecture (its description lists the template ids).
+- `draw_on_canvas` — draw with exact control: text, blank cards, shapes, notes, components and groups at precise coordinates, then connect, move, align or remove them. All operations in a call apply or none do. Use it for a whiteboard or sketch, annotations, or a precise arrangement, and to edit any existing diagram.
+- `layout_diagram` — re-arrange the current diagram with ArchDraw's own layout (direction, flow or zones, wrapping long flows, per-group direction) without changing what is in it. Use it when a diagram looks cramped, too wide or too tall; follow with `draw_on_canvas` move or align for touch-ups.
+
+For an image, the inline preview has a Download PNG button, and the editor link can export PNG or SVG.
 
 ## Output contract
 
