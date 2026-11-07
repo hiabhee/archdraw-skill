@@ -28,12 +28,12 @@ If it succeeds, tell the user to restart the agent, then check the tools again. 
   ```
 - **Codex:** install the plugin (`codex plugin marketplace add hiabhee/ArchDraw`, then `codex plugin add archdraw@archdraw`), or run:
   ```bash
-  codex mcp add archdraw --env API_BASE_URL=https://archdraw.hiabhee.online -- npx -y @hiabhee/archdraw-mcp-server@1.1.0
+  codex mcp add archdraw --env API_BASE_URL=https://archdraw.hiabhee.online -- npx -y @hiabhee/archdraw-mcp-server@1.2.0
   ```
 - **Claude apps (claude.ai, Desktop, mobile):** Settings → Connectors → Add custom connector, with URL `https://archdraw.hiabhee.online/api/mcp`.
 - **OpenCode v1** (`opencode.json`): `"mcp": { "archdraw": { "type": "remote", "url": "https://archdraw.hiabhee.online/api/mcp", "enabled": true } }`
 - **OpenCode v2** (`opencode.jsonc`): `"mcp": { "servers": { "archdraw": { "type": "remote", "url": "https://archdraw.hiabhee.online/api/mcp" } } }`
-- **Other clients:** use the remote URL above with the Streamable HTTP transport. If the client supports only local servers, use command `npx`, arguments `-y @hiabhee/archdraw-mcp-server@1.1.0`, and environment `API_BASE_URL=https://archdraw.hiabhee.online`.
+- **Other clients:** use the remote URL above with the Streamable HTTP transport. If the client supports only local servers, use command `npx`, arguments `-y @hiabhee/archdraw-mcp-server@1.2.0`, and environment `API_BASE_URL=https://archdraw.hiabhee.online`.
 
 The local server **requires** `API_BASE_URL`. Without it, the tools load but `generate_diagram`, `apply_template`, and preview links fail with "requires API_BASE_URL". For a self-hosted ArchDraw, use that deployment's URL instead. The local server needs Node.js 18 or later. Every client needs a restart after setup.
 
@@ -85,7 +85,7 @@ For a proposed refactor, migration, or feature, create a clearly labelled propos
 - `update_diagram` — make targeted changes to the active diagram; a published link updates in place.
 - `get_diagram_state` — read the current nodes and edges before editing.
 - `apply_template` — start from a ready-made architecture (its description lists the template ids).
-- `draw_on_canvas` — draw with exact control: text, blank cards, shapes, notes, components and groups at precise coordinates, then connect, move, align or remove them. All operations in a call apply or none do. Use it for a whiteboard or sketch, annotations, or a precise arrangement, and to edit any existing diagram.
+- `draw_on_canvas` — draw with exact control: text, blank cards, shapes, notes, components and groups at precise coordinates, then connect, move, align or remove them. All operations in a call apply or none do. Use it for a whiteboard or sketch, annotations, or a precise arrangement, and to edit any existing diagram. From 1.2.0 it also draws simple infographics: `shape` (panels, circles, dividers and arrows behind everything) and `stat` (a big value with a label, caption and icon) for steps, timelines, comparisons and key numbers.
 - `layout_diagram` — re-arrange the current diagram with ArchDraw's own layout (direction, flow or zones, wrapping long flows, per-group direction) without changing what is in it. Use it when a diagram looks cramped, too wide or too tall; follow with `draw_on_canvas` move or align for touch-ups.
 
 For an image, the inline preview has a Download PNG button, and the editor link can export PNG or SVG.

@@ -22,7 +22,7 @@ The installer finds Codex, Claude Code, and OpenCode on your machine. For each o
 | Agent | Skill location | MCP connection |
 | --- | --- | --- |
 | Claude Code | `~/.claude/skills/archdraw-diagram/` | Hosted endpoint, user scope |
-| Codex | `~/.codex/skills/archdraw-diagram/` | Local server `@hiabhee/archdraw-mcp-server@1.1.0` with `API_BASE_URL` |
+| Codex | `~/.codex/skills/archdraw-diagram/` | Local server `@hiabhee/archdraw-mcp-server@1.2.0` with `API_BASE_URL` |
 | OpenCode | `~/.config/opencode/skills/archdraw-diagram/` | Hosted endpoint in `~/.config/opencode/opencode.json` (v1 or v2 format, from `opencode --version`). The old file is kept as `opencode.json.bak`. |
 
 Options:
@@ -72,7 +72,7 @@ claude mcp add --scope user --transport http archdraw https://archdraw.hiabhee.o
 **Codex**
 
 ```bash
-codex mcp add archdraw --env API_BASE_URL=https://archdraw.hiabhee.online -- npx -y @hiabhee/archdraw-mcp-server@1.1.0
+codex mcp add archdraw --env API_BASE_URL=https://archdraw.hiabhee.online -- npx -y @hiabhee/archdraw-mcp-server@1.2.0
 ```
 
 **Claude apps (claude.ai, Claude Desktop, Claude mobile)**
@@ -118,7 +118,7 @@ Use the remote URL `https://archdraw.hiabhee.online/api/mcp` with the Streamable
   "mcpServers": {
     "archdraw": {
       "command": "npx",
-      "args": ["-y", "@hiabhee/archdraw-mcp-server@1.1.0"],
+      "args": ["-y", "@hiabhee/archdraw-mcp-server@1.2.0"],
       "env": {
         "API_BASE_URL": "https://archdraw.hiabhee.online"
       }

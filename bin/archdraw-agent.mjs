@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 
 // Keep these in sync with SKILL.md and README.md (test/archdraw-agent.test.mjs checks it)
 // and with the pin in hiabhee/ArchDraw plugins/archdraw/mcp.json.
-export const MCP_PACKAGE = '@hiabhee/archdraw-mcp-server@1.1.0';
+export const MCP_PACKAGE = '@hiabhee/archdraw-mcp-server@1.2.0';
 export const API_BASE_URL = 'https://archdraw.hiabhee.online';
 export const REMOTE_MCP_URL = `${API_BASE_URL}/api/mcp`;
 
