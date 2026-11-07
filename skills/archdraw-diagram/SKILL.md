@@ -14,8 +14,8 @@ Use ArchDraw when a user needs a clear, editable software architecture diagram o
 **If you have shell access**, you may run the installer once. It installs this skill and connects ArchDraw for Codex, Claude Code, and OpenCode:
 
 ```bash
-npx -y archdraw-agent@0.1.6 setup --dry-run   # preview
-npx -y archdraw-agent@0.1.6 setup
+npx -y archdraw-agent@0.1.7 setup --dry-run   # preview
+npx -y archdraw-agent@0.1.7 setup
 ```
 
 If it succeeds, tell the user to restart the agent, then check the tools again. If it fails, or you have no shell, **do not retry in a loop**. Give the user the matching setup below, wait for confirmation, then check again.

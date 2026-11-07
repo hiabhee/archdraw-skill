@@ -14,7 +14,7 @@ The skill has two parts, and the agent needs both:
 ## Quick setup
 
 ```bash
-npx -y archdraw-agent@0.1.6 setup
+npx -y archdraw-agent@0.1.7 setup
 ```
 
 The installer finds Codex, Claude Code, and OpenCode on your machine. For each one, it installs the skill and connects ArchDraw:
@@ -38,7 +38,7 @@ Restart the agent after setup.
 Versions 0.1.3 and earlier registered the local server without `API_BASE_URL`. With that install, the tools load, but diagram generation fails with "requires API_BASE_URL". Versions 0.1.3 and earlier also wrote the OpenCode v2 format into all OpenCode configs. To repair an install, run:
 
 ```bash
-npx -y archdraw-agent@0.1.6 setup --force
+npx -y archdraw-agent@0.1.7 setup --force
 ```
 
 ## Manual setup
@@ -164,7 +164,7 @@ Refer to the [privacy policy](https://archdraw.hiabhee.online/privacy).
 
 | Problem | Corrective action |
 | --- | --- |
-| `generate_diagram` fails with "requires API_BASE_URL". | Add `API_BASE_URL=https://archdraw.hiabhee.online` to the local server, or run `npx -y archdraw-agent@0.1.6 setup --force`. |
+| `generate_diagram` fails with "requires API_BASE_URL". | Add `API_BASE_URL=https://archdraw.hiabhee.online` to the local server, or run `npx -y archdraw-agent@0.1.7 setup --force`. |
 | Follow-up calls fail with "needs the workingSessionId". | The agent must resend the `workingSessionId` from `generate_diagram`. Update the skill to 0.1.4 or later. |
 | The tools do not appear. | Fully restart the agent. Then run the list command for your agent. |
 | OpenCode does not load ArchDraw. | Make sure the entry uses the format for your OpenCode version (v1 or v2 above). |
